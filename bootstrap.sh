@@ -125,7 +125,7 @@ EOF
     log_info "✅ SSH public key downloaded"
     
     # Switch git remote to SSH now that we have keys
-    log_info "🔄 Switching git remote to SSH..."
+    log_info "🔄 Switching git remote to SSH...: $REPO_SSH_URL"
     git remote set-url origin "$REPO_SSH_URL"
     
     log_info "✅ Doppler setup completed"

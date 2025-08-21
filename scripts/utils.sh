@@ -35,10 +35,9 @@ start() {
     log_info "🚀 Starting CodeServer..."
     
     # Create volumes if they don't exist
-    mkdir -p volumes/{workspace,vscode-config}
-    mkdir -p secrets/ssh-keys
+    mkdir -p {workspace,vscode-config}
     
-    # Start with docker-compose
+    # Start with docker compose
     docker compose up -d
     
     # Wait a bit for startup
@@ -48,12 +47,16 @@ start() {
     if docker ps | grep -q codeserver-main; then
         log_info "✅ CodeServer started successfully"
         
-        # Get external IP
-        EXTERNAL_IP=$(curl -s ifconfig.me 2>/dev/null || echo "your-server-ip")
-        EXTERNAL_PORT=$(grep EXTERNAL_PORT secrets/.env 2>/dev/null | cut -d'=' -f2 || echo "8080")
+        # Get external IPv4 (force IPv4 with multiple fallbacks)
+        EXTERNAL_IP=$(curl -4 -s ifconfig.me 2>/dev/null || \
+                     curl -4 -s ipv4.icanhazip.com 2>/dev/null || \
+                     curl -4 -s api.ipify.org 2>/dev/null || \
+                     echo "your-server-ip")
+        
+        EXTERNAL_PORT=$(grep EXTERNAL_PORT .env 2>/dev/null | cut -d'=' -f2 || echo "8080")
         
         log_info "🌐 Access at: http://$EXTERNAL_IP:$EXTERNAL_PORT"
-        log_info "🔑 Password: check your secrets/.env file"
+        log_info "🔑 Password: check your .env file"
     else
         log_error "❌ Failed to start CodeServer"
         docker compose logs

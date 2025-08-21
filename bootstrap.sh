@@ -126,12 +126,36 @@ EOF
     log_info "✅ Doppler setup completed"
 }
 
+#Docker compose and run
+build_and_deploy() {
+    log_info "🔨 Building Docker image..."
+    chmod +x scripts/utils.sh
+    ./scripts/utils.sh build
+    
+    log_info "🚀 Starting CodeServer..."
+    ./scripts/utils.sh start
+}
+
+#Print pass for reminder and some info
+show_result() {
+    local external_ip=$(curl -s ifconfig.me 2>/dev/null || echo "your-vps-ip")
+    local password=$(grep "^PASSWORD=" .env | cut -d'=' -f2)
+    
+    echo
+    log_info "🎉 CodeServer is ready!"
+    log_info "🌐 URL: http://$external_ip:8080"
+    log_info "🔑 Password: $password"
+    log_info "💡 Management: ./scripts/utils.sh help"
+}
+
 # Main execution
 main() {
     install_docker
     clone_repo
     setup_doppler
     get_secret
+    build_and_deploy
+    show_result
     log_info "🎉 Your VPS is setup for code server"
 }
 

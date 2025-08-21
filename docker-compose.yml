@@ -13,7 +13,7 @@ services:
       - ./vscode-config:/home/vscode/.config
       
       # SSH keys (if available)
-      - .ssh:/home/vscode/.ssh:ro
+      - .ssh:/home/vscode/.ssh
       
     restart: unless-stopped
     

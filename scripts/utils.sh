@@ -15,9 +15,8 @@ log_error() { echo -e "${RED}[ERROR]${NC} $1"; }
 
 # Check if .env exists
 check_env() {
-    if [ ! -f "secrets/.env" ] && [ ! -f ".env" ]; then
-        log_error "No .env file found. Create secrets/.env or .env first."
-        log_info "Copy from: cp .env.example secrets/.env"
+    if [ ! -f ".env" ]; then
+        log_error "No .env file found. Create .env first."
         exit 1
     fi
 }

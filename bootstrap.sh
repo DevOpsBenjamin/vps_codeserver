@@ -45,12 +45,14 @@ install_docker() {
 
 # Clone repository
 clone_repo() {
-    log_info "📥 Cloning [$REPO_URL..."
+    log_info "📥 Cloning [$REPO_URL]..."
     
     if [ -d "vps_codeserver" ]; then
-        cd vps_codeserver && git pull
+        cd vps_codeserver
+        git pull
     else
-        git clone "$REPO_URL" && cd vps_codeserver
+        git clone "$REPO_URL"
+        cd vps_codeserver
     fi
 }
 
@@ -62,40 +64,63 @@ setup_doppler() {
         log_info "export DOPPLER_TOKEN=dp.st.xxx"
         exit 0
     fi
-    
-    log_info "🔐 Setting up Doppler secrets..."    
+      
     # Install Doppler CLI if needed
     if ! command -v doppler &> /dev/null; then
         log_info "📦 Installing Doppler CLI..."
         curl -Ls --tlsv1.2 --proto "=https" --retry 3 https://cli.doppler.com/install.sh | sudo sh
+    else
+        log_info "✅ Doppler already installed"
     fi
 }
 
 get_secret() {
+    # Required secrets list
+    local required_secrets=("CODESERVER_PASSWORD" "SSH_PRIVATE_KEY" "SSH_PUBLIC_KEY")
+    local missing_secrets=()
+    
+    log_info "🔍 Checking required secrets in Doppler..."
+    
+    # Check if all required secrets exist
+    for secret in "${required_secrets[@]}"; do
+        if ! doppler secrets get "$secret" --plain >/dev/null 2>&1; then
+            missing_secrets+=("$secret")
+        fi
+    done
+    
+    # Exit if any secrets are missing
+    if [ ${#missing_secrets[@]} -ne 0 ]; then
+        log_error "❌ Missing required secrets in Doppler:"
+        for secret in "${missing_secrets[@]}"; do
+            log_error "   - $secret"
+        done
+        log_error "Please add these secrets to your Doppler project and try again."
+        exit 1
+    fi
+    
+    log_info "✅ All required secrets found in Doppler"    
     # Download secrets
     log_info "🔽 Downloading secrets from Doppler..."
-    mkdir -p secrets/ssh-keys
+
+    # Create .env file with required secrets
+    cat > .env << EOF
+# VPS CodeServer Configuration (from Doppler)
+PASSWORD=$(doppler secrets get CODESERVER_PASSWORD --plain)
+EXTERNAL_PORT=8080
+OLLAMA_BASE_URL=http://localhost:11434
+GIT_USER_NAME=vscode
+GIT_USER_EMAIL=vscode@codeserver.local
+EOF
+    log_info "✅ Environment secrets downloaded"
+
+    # Download SSH keys
+    doppler secrets get SSH_PRIVATE_KEY --plain | base64 -d > .ssh/id_rsa
+    chmod 600 ssh/id_rsa
+    log_info "✅ SSH private key downloaded"
     
-    # Download .env file
-    if doppler secrets download --format env --no-file > secrets/.env 2>/dev/null; then
-        log_info "✅ Environment secrets downloaded"
-    else
-        log_error "❌ Failed to download secrets from Doppler"
-        return 1
-    fi
-    
-    # Download SSH keys if they exist
-    if doppler secrets get SSH_PRIVATE_KEY --plain >/dev/null 2>&1; then
-        doppler secrets get SSH_PRIVATE_KEY --plain | base64 -d > secrets/ssh-keys/id_rsa
-        chmod 600 secrets/ssh-keys/id_rsa
-        log_info "✅ SSH private key downloaded"
-    fi
-    
-    if doppler secrets get SSH_PUBLIC_KEY --plain >/dev/null 2>&1; then
-        doppler secrets get SSH_PUBLIC_KEY --plain | base64 -d > secrets/ssh-keys/id_rsa.pub
-        chmod 644 secrets/ssh-keys/id_rsa.pub
-        log_info "✅ SSH public key downloaded"
-    fi
+    doppler secrets get SSH_PUBLIC_KEY --plain | base64 -d > .ssh/id_rsa.pub
+    chmod 644 ssh/id_rsa.pub
+    log_info "✅ SSH public key downloaded"
     
     log_info "✅ Doppler setup completed"
 }

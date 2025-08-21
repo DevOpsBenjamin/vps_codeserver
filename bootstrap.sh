@@ -1,6 +1,6 @@
 #!/bin/bash
 # bootstrap.sh - Step 1: Just Docker
-REPO_URL=https://github.com/DevOpsBenjamin/vps_codeserver
+REPO_URL=git@github.com:DevOpsBenjamin/vps_codeserver.git
 set -e
 
 # Colors

@@ -1,3 +1,4 @@
+
 #!/bin/bash
 # bootstrap.sh - Step 1: Just Docker
 
@@ -7,6 +8,14 @@ set -e
 GREEN='\033[0;32m'
 RED='\033[0;31m'
 NC='\033[0m'
+
+echo "=== DEBUG VARIABLES ==="
+echo "BASH_SOURCE[0]: [${BASH_SOURCE[0]:-EMPTY}]"
+echo "BASH_SOURCE[1]: [${BASH_SOURCE[1]:-EMPTY}]"
+echo "0: [$0]"
+echo "1: [${1:-EMPTY}]"
+echo "PWD: [$PWD]"
+echo "OLDPWD: [${OLDPWD:-EMPTY}]"
 
 log_info() { echo -e "${GREEN}[INFO]${NC} $1"; }
 log_error() { echo -e "${RED}[ERROR]${NC} $1"; }

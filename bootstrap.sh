@@ -44,13 +44,13 @@ install_docker() {
 }
 
 # Clone repository
-clone_repo() {
-    log_info "📥 Cloning [$REPO_URL]..."
-    
+clone_repo() {    
     if [ -d "vps_codeserver" ]; then
+        log_info "📥 Repo already present pulling..."
         cd vps_codeserver
         git pull
     else
+        log_info "📥 Cloning [$REPO_URL]..."
         git clone "$REPO_URL"
         cd vps_codeserver
     fi

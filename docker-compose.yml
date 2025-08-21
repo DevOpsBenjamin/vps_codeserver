@@ -13,11 +13,11 @@ services:
       - GIT_AUTHOR_EMAIL=${GIT_USER_EMAIL:-codeserver@localhost}
     volumes:
       # Persistent workspace
-      - ./volumes/workspace:/workspace
-      - ./volumes/vscode-config:/home/vscode/.config
+      - ./workspace:/workspace
+      - ./vscode-config:/home/vscode/.config
       
       # SSH keys (if available)
-      - ./secrets/ssh-keys:/home/vscode/.ssh:ro
+      - .ssh:/home/vscode/.ssh:ro
       
     restart: unless-stopped
     

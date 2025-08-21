@@ -115,11 +115,11 @@ EOF
 
     # Download SSH keys
     mkdir -p .ssh
-    doppler secrets get SSH_PRIVATE_KEY --plain | base64 -d > .ssh/id_rsa
+    doppler secrets get SSH_PRIVATE_KEY --plain > .ssh/id_rsa
     chmod 600 ssh/id_rsa
     log_info "✅ SSH private key downloaded"
     
-    doppler secrets get SSH_PUBLIC_KEY --plain | base64 -d > .ssh/id_rsa.pub
+    doppler secrets get SSH_PUBLIC_KEY --plain > .ssh/id_rsa.pub
     chmod 644 ssh/id_rsa.pub
     log_info "✅ SSH public key downloaded"
     

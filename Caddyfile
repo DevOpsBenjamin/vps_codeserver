@@ -1,0 +1,8 @@
+jetdail.fr {
+    reverse_proxy codeserver-main:8080
+    
+    # Optionnel: logs pour debug
+    log {
+        output file /var/log/caddy/jetdail.fr.log
+    }
+}

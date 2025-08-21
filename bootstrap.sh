@@ -11,7 +11,7 @@ NC='\033[0m'
 log_info() { echo -e "${GREEN}[INFO]${NC} $1"; }
 log_error() { echo -e "${RED}[ERROR]${NC} $1"; }
 
-echo "🚀 Bootstrap Step 1: Docker"
+log_info "🚀 Bootstrap Setting up VPS"
 
 # Install Docker if needed
 install_docker() {
@@ -43,10 +43,23 @@ install_docker() {
     fi
 }
 
+
+# Clone repository
+clone_repo() {
+    # Extract repo URL from the script URL
+    # If script is from: https://raw.githubusercontent.com/USER/REPO/main/bootstrap.sh
+    # Then repo is: https://github.com/USER/REPO
+    local script_url="${BASH_SOURCE[0]}"
+    
+    log_info "📥 Url $script_url"
+}
+
+
 # Main execution
 main() {
     install_docker
-    log_info "🎉 Step 1 completed - Docker is ready!"
+    clone_repo
+    log_info "🎉 Your VPS is setup for code server"
 }
 
 main "$@"

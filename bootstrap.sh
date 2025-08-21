@@ -1,4 +1,3 @@
-
 #!/bin/bash
 # bootstrap.sh - Step 1: Just Docker
 REPO_URL=https://github.com/DevOpsBenjamin/vps_codeserver
@@ -47,14 +46,14 @@ install_docker() {
 
 # Clone repository
 clone_repo() {
-    # Extract repo URL from the script URL
-    # If script is from: https://raw.githubusercontent.com/USER/REPO/main/bootstrap.sh
-    # Then repo is: https://github.com/USER/REPO
-    local script_url="${BASH_SOURCE[1]}"
+    log_info "📥 Cloning [$REPO_URL..."
     
-    log_info "📥 Url: [$REPO_URL]"
+    if [ -d "vps_codeserver" ]; then
+        cd vps_codeserver && git pull
+    else
+        git clone "$REPO_URL" && cd vps_codeserver
+    fi
 }
-
 
 # Main execution
 main() {

@@ -35,6 +35,8 @@ start() {
     
     # Create volumes if they don't exist
     mkdir -p {workspace,vscode-config}
+    # For docker right
+    chown -R 1001:1001 workspace vscode-config .ssh
     
     # Start with docker compose
     docker compose up -d

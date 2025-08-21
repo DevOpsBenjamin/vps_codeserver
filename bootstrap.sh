@@ -43,7 +43,6 @@ install_docker() {
     fi
 }
 
-
 # Clone repository
 clone_repo() {
     log_info "📥 Cloning [$REPO_URL..."
@@ -55,10 +54,57 @@ clone_repo() {
     fi
 }
 
+# Setup Doppler
+setup_doppler() {
+    # Skip if no DOPPLER_TOKEN
+    if [ -z "${DOPPLER_TOKEN:-}" ]; then
+        log_error "⚠️  No DOPPLER_TOKEN found. Do export of the token and run the setup again."
+        log_info "export DOPPLER_TOKEN=dp.st.xxx"
+        exit 0
+    fi
+    
+    log_info "🔐 Setting up Doppler secrets..."    
+    # Install Doppler CLI if needed
+    if ! command -v doppler &> /dev/null; then
+        log_info "📦 Installing Doppler CLI..."
+        curl -Ls --tlsv1.2 --proto "=https" --retry 3 https://cli.doppler.com/install.sh | sudo sh
+    fi
+}
+
+get_secret() {
+    # Download secrets
+    log_info "🔽 Downloading secrets from Doppler..."
+    mkdir -p secrets/ssh-keys
+    
+    # Download .env file
+    if doppler secrets download --format env --no-file > secrets/.env 2>/dev/null; then
+        log_info "✅ Environment secrets downloaded"
+    else
+        log_error "❌ Failed to download secrets from Doppler"
+        return 1
+    fi
+    
+    # Download SSH keys if they exist
+    if doppler secrets get SSH_PRIVATE_KEY --plain >/dev/null 2>&1; then
+        doppler secrets get SSH_PRIVATE_KEY --plain | base64 -d > secrets/ssh-keys/id_rsa
+        chmod 600 secrets/ssh-keys/id_rsa
+        log_info "✅ SSH private key downloaded"
+    fi
+    
+    if doppler secrets get SSH_PUBLIC_KEY --plain >/dev/null 2>&1; then
+        doppler secrets get SSH_PUBLIC_KEY --plain | base64 -d > secrets/ssh-keys/id_rsa.pub
+        chmod 644 secrets/ssh-keys/id_rsa.pub
+        log_info "✅ SSH public key downloaded"
+    fi
+    
+    log_info "✅ Doppler setup completed"
+}
+
 # Main execution
 main() {
     install_docker
     clone_repo
+    setup_doppler
     log_info "🎉 Your VPS is setup for code server"
 }
 

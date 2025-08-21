@@ -39,7 +39,7 @@ start() {
     mkdir -p secrets/ssh-keys
     
     # Start with docker-compose
-    docker-compose up -d
+    docker compose up -d
     
     # Wait a bit for startup
     sleep 5
@@ -56,14 +56,14 @@ start() {
         log_info "🔑 Password: check your secrets/.env file"
     else
         log_error "❌ Failed to start CodeServer"
-        docker-compose logs
+        docker compose logs
     fi
 }
 
 # Stop services
 stop() {
     log_info "⏹️  Stopping CodeServer..."
-    docker-compose down
+    docker compose down
     log_info "✅ Stopped"
 }
 
@@ -83,7 +83,7 @@ rebuild() {
 
 # Show logs
 logs() {
-    docker-compose logs -f
+    docker compose logs -f
 }
 
 # Open shell in container
@@ -102,7 +102,7 @@ status() {
     
     if docker ps | grep -q codeserver-main; then
         log_info "✅ Running"
-        docker-compose ps
+        docker compose ps
         
         # Show resource usage
         echo
@@ -110,7 +110,7 @@ status() {
         docker stats codeserver-main --no-stream --format "table {{.Container}}\t{{.CPUPerc}}\t{{.MemUsage}}\t{{.NetIO}}"
     else
         log_warn "❌ Not running"
-        docker-compose ps
+        docker compose ps
     fi
 }
 
@@ -135,7 +135,7 @@ update() {
 # Clean up
 clean() {
     log_info "🧹 Cleaning up..."
-    docker-compose down
+    docker compose down
     docker system prune -f
     log_info "✅ Cleanup completed"
 }

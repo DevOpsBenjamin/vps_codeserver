@@ -25,19 +25,19 @@ services:
       retries: 3
       start_period: 40s
 
-    caddy:
-      image: caddy:latest
-      container_name: caddy-proxy
-      ports:
-        - "80:80"     # HTTP
-        - "443:443"   # HTTPS
-      volumes:
-        - ./Caddyfile:/etc/caddy/Caddyfile:ro
-        - caddy_data:/data
-        - caddy_config:/config
-      restart: unless-stopped
-      depends_on:
-        - codeserver
+  caddy:
+    image: caddy:latest
+    container_name: caddy-proxy
+    ports:
+      - "80:80"     # HTTP
+      - "443:443"   # HTTPS
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy_data:/data
+      - caddy_config:/config
+    restart: unless-stopped
+    depends_on:
+      - codeserver
         
 volumes:
   caddy_data:

@@ -51,7 +51,7 @@ clone_repo() {
     # Then repo is: https://github.com/USER/REPO
     local script_url="${BASH_SOURCE[0]}"
     
-    log_info "📥 Url $script_url"
+    log_info "📥 Url [$script_url]"
 }
 
 

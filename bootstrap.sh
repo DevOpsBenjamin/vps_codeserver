@@ -1,6 +1,7 @@
 #!/bin/bash
 # bootstrap.sh - Step 1: Just Docker
-REPO_URL='git@github.com:DevOpsBenjamin/vps_codeserver.git'
+REPO_SSH_URL='git@github.com:DevOpsBenjamin/vps_codeserver.git'
+REPO_HTTPS_URL='https://github.com/DevOpsBenjamin/vps_codeserver.git'
 set -e
 
 # Colors
@@ -50,8 +51,8 @@ clone_repo() {
         cd vps_codeserver
         git pull
     else
-        log_info "📥 Cloning [$REPO_URL]..."
-        git clone "$REPO_URL"
+        log_info "📥 Cloning [$REPO_HTTPS_URL]..."
+        git clone "$REPO_HTTPS_URL"
         cd vps_codeserver
     fi
 }
@@ -122,6 +123,10 @@ EOF
     doppler secrets get SSH_PUBLIC_KEY --plain > .ssh/id_rsa.pub
     chmod 644 .ssh/id_rsa.pub
     log_info "✅ SSH public key downloaded"
+    
+    # Switch git remote to SSH now that we have keys
+    log_info "🔄 Switching git remote to SSH..."
+    git remote set-url origin "$REPO_SSH_URL"
     
     log_info "✅ Doppler setup completed"
 }

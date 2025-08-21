@@ -114,6 +114,7 @@ EOF
     log_info "✅ Environment secrets downloaded"
 
     # Download SSH keys
+    mkdir -p .ssh
     doppler secrets get SSH_PRIVATE_KEY --plain | base64 -d > .ssh/id_rsa
     chmod 600 ssh/id_rsa
     log_info "✅ SSH private key downloaded"

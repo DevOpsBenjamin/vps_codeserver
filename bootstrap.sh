@@ -130,6 +130,7 @@ main() {
     install_docker
     clone_repo
     setup_doppler
+    get_secret
     log_info "🎉 Your VPS is setup for code server"
 }
 

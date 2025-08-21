@@ -14,8 +14,7 @@ log_warn() { echo -e "${YELLOW}[WARN]${NC} $1"; }
 log_error() { echo -e "${RED}[ERROR]${NC} $1"; }
 
 # Configuration
-REPO_URL="https://github.com/yourusername/vps-codeserver.git"
-
+REPO_URL="https://github.com/DevOpsBenjamin/vps_codeserver"
 echo "🚀 VPS CodeServer Bootstrap"
 echo "=========================="
 

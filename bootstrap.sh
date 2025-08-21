@@ -105,7 +105,7 @@ get_secret() {
     # Create .env file with required secrets
     cat > .env << EOF
 # VPS CodeServer Configuration (from Doppler)
-PASSWORD=$(doppler secrets get CODESERVER_PASSWORD --plain)
+PASSWORD='$(doppler secrets get CODESERVER_PASSWORD --plain)'
 EXTERNAL_PORT=8080
 OLLAMA_BASE_URL=http://localhost:11434
 GIT_USER_NAME=vscode

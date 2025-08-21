@@ -2,8 +2,6 @@ services:
   codeserver:
     build: .
     container_name: codeserver-main
-    ports:
-      - "${EXTERNAL_PORT:-8080}:8080"
     environment:
       - PASSWORD=${PASSWORD}
       - OLLAMA_HOST=${OLLAMA_BASE_URL:-http://localhost:11434}
@@ -26,3 +24,21 @@ services:
       timeout: 10s
       retries: 3
       start_period: 40s
+
+    caddy:
+      image: caddy:latest
+      container_name: caddy-proxy
+      ports:
+        - "80:80"     # HTTP
+        - "443:443"   # HTTPS
+      volumes:
+        - ./Caddyfile:/etc/caddy/Caddyfile:ro
+        - caddy_data:/data
+        - caddy_config:/config
+      restart: unless-stopped
+      depends_on:
+        - codeserver
+        
+volumes:
+  caddy_data:
+  caddy_config:

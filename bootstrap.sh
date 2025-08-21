@@ -49,7 +49,7 @@ clone_repo() {
     # Extract repo URL from the script URL
     # If script is from: https://raw.githubusercontent.com/USER/REPO/main/bootstrap.sh
     # Then repo is: https://github.com/USER/REPO
-    local script_url="${BASH_SOURCE[0]}"
+    local script_url="${BASH_SOURCE[1]}"
     
     log_info "📥 Url [$script_url]"
 }

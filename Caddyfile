@@ -6,3 +6,30 @@ jetdail.fr {
         output file /var/log/caddy/jetdail.fr.log
     }
 }
+
+# Dev server avec fallback intelligent
+dev.jetdail.fr {
+      reverse_proxy codeserver-main:5173 {
+          # Health check pour détecter si service actif
+          health_uri /
+          health_interval 15s
+          health_timeout 5s
+
+          # Headers pour dev
+          header_up Host {upstream_hostport}
+          header_up X-Forwarded-Proto {scheme}
+      }
+
+      # Page d'erreur custom si dev server down
+      handle_errors {
+          @5xx expression `{http.error.status_code} >= 500`
+          respond @5xx `
+          <h2>🚀 VueVN Dev Server</h2>
+          <p>Dev server not running.</p>
+          <p>Start with: <code>npm run dev sample</code> in code-server</p>
+          <p>Then refresh this page.</p>
+          ` 503 {
+              header Content-Type "text/html; charset=utf-8"
+          }
+      }
+  }

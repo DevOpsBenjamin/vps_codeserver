@@ -52,9 +52,10 @@ Tout est piloté via `scripts/utils.sh` :
 ## 🍴 Utiliser votre propre fork
 
 1. **Forker** ce dépôt sur votre compte GitHub.
-2. Modifier les variables `REPO_HTTPS_URL` et `REPO_SSH_URL` en haut de `bootstrap.sh` pour pointer vers votre fork.
-3. Créer un projet Doppler et y ajouter vos secrets.
-4. Lancer l'installation en remplaçant l'URL du `curl` par celle de votre fork :
+2. Adapter le `Caddyfile` à votre domaine (remplacer `jetdail.fr`, etc.), puis committer.
+3. Modifier les variables `REPO_HTTPS_URL` et `REPO_SSH_URL` en haut de `bootstrap.sh` pour pointer vers votre fork.
+4. Créer un projet Doppler et y ajouter vos secrets.
+5. Lancer l'installation en remplaçant l'URL du `curl` par celle de votre fork :
 
 ```bash
 export DOPPLER_TOKEN=dp.st.prd.VOTRE_TOKEN

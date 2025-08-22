@@ -12,7 +12,7 @@ services:
       # Persistent workspace
       - ./workspace:/workspace
       - ./vscode-config:/home/vscode/.config
-      
+      - ../git:/workspace/git 
       # SSH keys (if available)
       - .ssh:/home/vscode/.ssh
       

@@ -8,7 +8,7 @@ Ce dépôt permet de déployer automatiquement un environnement [code-server](ht
 2. Sur votre VPS fraîchement installé :
 
 ```bash
-export DOPPLER_TOKEN=dp.st.prd.CHATGPT_OBFUSCATED
+export DOPPLER_TOKEN=dp.st.prd.VOTRE_TOKEN
 curl -fsSL "https://raw.githubusercontent.com/DevOpsBenjamin/vps_codeserver/main/bootstrap.sh" | bash
 ```
 

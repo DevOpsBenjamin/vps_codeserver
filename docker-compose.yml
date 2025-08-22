@@ -7,6 +7,7 @@ services:
       - OLLAMA_HOST=${OLLAMA_BASE_URL:-http://localhost:11434}
       - GIT_AUTHOR_NAME=${GIT_USER_NAME:-CodeServer}
       - GIT_AUTHOR_EMAIL=${GIT_USER_EMAIL:-codeserver@localhost}
+      - VSCODE_PROXY_URI=https://jetdail.fr
     volumes:
       # Persistent workspace
       - ./workspace:/workspace

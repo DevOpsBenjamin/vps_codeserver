@@ -10,16 +10,7 @@ jetdail.fr {
 }
 
 dev.jetdail.fr {
-    reverse_proxy codeserver-main:5173 {
-        # Active health checks (optional; only useful if the dev server actually runs)
-        health_uri /
-        health_interval 15s
-        health_timeout 5s
-
-        # Usually not needed; Caddy sets sane forwards.
-        # header_up Host {upstream_hostport}
-        # (Remove X-Forwarded-Proto; Caddy forwards it by default)
-    }
+    reverse_proxy codeserver-main:5173
 
     # Custom error page when upstream is down
     handle_errors {

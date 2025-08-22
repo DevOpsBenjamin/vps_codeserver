@@ -1,82 +1,86 @@
 # 🚀 VPS CodeServer
 
-Ce dépôt permet de déployer automatiquement un environnement [code-server](https://github.com/coder/code-server) sur un VPS grâce à Docker, Doppler et Caddy. En deux commandes, votre machine est prête pour coder à distance.
+This repository automates the deployment of a [code-server](https://github.com/coder/code-server) environment on a VPS using Docker, Doppler and Caddy. In just a couple of commands your server is ready for remote coding.
 
-## ⚡ Installation express
+## ⚡ Quick install
 
-1. Générez un token pour votre projet sur [Doppler](https://doppler.com) contenant les secrets requis.
-2. Sur votre VPS fraîchement installé :
+1. Generate a token in [Doppler](https://doppler.com) containing the required secrets.
+2. On your freshly installed VPS run:
 
 ```bash
-export DOPPLER_TOKEN=dp.st.prd.VOTRE_TOKEN
+export DOPPLER_TOKEN=dp.st.prd.YOUR_TOKEN
 curl -fsSL "https://raw.githubusercontent.com/DevOpsBenjamin/vps_codeserver/main/bootstrap.sh" | bash
 ```
 
-Le script `bootstrap.sh` :
-- installe Docker si nécessaire ;
-- clone ce dépôt ;
-- télécharge les secrets depuis Doppler et génère `.env` et les clés SSH ;
-- construit l'image Docker et lance `docker compose` (CodeServer + Caddy).
+You can execute the command from any directory (e.g. `/work`). The script creates two folders: `vps_codeserver/` for this repository and `git/` for your own repositories. The `git/` folder is mounted inside CodeServer at `/workspace/git` so you can manage additional Git projects easily.
 
-## 🔑 Secrets Doppler
+The `bootstrap.sh` script:
 
-Le projet Doppler doit contenir au minimum :
+- installs Docker if necessary
+- clones this repository
+- downloads secrets from Doppler to generate `.env` and SSH keys
+- builds the Docker image and starts `docker compose` (CodeServer + Caddy)
 
-| Clé                | Description                                               |
-|--------------------|-----------------------------------------------------------|
-| `CODESERVER_PASSWORD` | Mot de passe pour l'accès à code-server                 |
-| `SSH_PRIVATE_KEY`  | Clé privée SSH (PEM) utilisée pour `git`                   |
-| `SSH_PUBLIC_KEY`   | Clé publique correspondante                               |
+## 🔑 Doppler secrets
 
-Variables optionnelles prises en compte dans `.env` :
+Your Doppler project must contain at least:
 
-| Clé             | Valeur par défaut            |
-|-----------------|------------------------------|
-| `EXTERNAL_PORT` | `8080`                        |
-| `OLLAMA_BASE_URL` | `http://localhost:11434`   |
-| `GIT_USER_NAME`   | `vscode`                    |
-| `GIT_USER_EMAIL`  | `vscode@codeserver.local`   |
+| Key | Description |
+| --- | --- |
+| `CODESERVER_PASSWORD` | Password for access to code-server |
+| `SSH_PRIVATE_KEY` | SSH private key (PEM) used for `git` |
+| `SSH_PUBLIC_KEY` | Matching public key |
 
-## 🛠️ Gestion quotidienne
+Optional variables recognized in `.env`:
 
-Tout est piloté via `scripts/utils.sh` :
+| Key | Default value |
+| --- | --- |
+| `EXTERNAL_PORT` | `8080` |
+| `OLLAMA_BASE_URL` | `http://localhost:11434` |
+| `GIT_USER_NAME` | `vscode` |
+| `GIT_USER_EMAIL` | `vscode@codeserver.local` |
+
+## 🛠️ Daily usage
+
+Everything is controlled via `scripts/utils.sh`:
 
 ```bash
-./scripts/utils.sh build       # construire l'image
-./scripts/utils.sh start       # démarrer CodeServer et Caddy
-./scripts/utils.sh stop        # arrêter les conteneurs
-./scripts/utils.sh status      # afficher l'état et l'IP publique
-./scripts/utils.sh logs        # suivre les logs
+./scripts/utils.sh build   # build the image
+./scripts/utils.sh start   # start CodeServer and Caddy
+./scripts/utils.sh stop    # stop the containers
+./scripts/utils.sh status  # display status and public IP
+./scripts/utils.sh logs    # follow logs
 ```
 
-## 🍴 Utiliser votre propre fork
+## 🍴 Use your own fork
 
-1. **Forker** ce dépôt sur votre compte GitHub.
-2. Adapter le `Caddyfile` à votre domaine (remplacer `jetdail.fr`, etc.), puis committer.
-3. Modifier les variables `REPO_HTTPS_URL` et `REPO_SSH_URL` en haut de `bootstrap.sh` pour pointer vers votre fork.
-4. Créer un projet Doppler et y ajouter vos secrets.
-5. Lancer l'installation en remplaçant l'URL du `curl` par celle de votre fork :
+1. **Fork** this repository on GitHub.
+2. Adjust the `Caddyfile` for your domain (replace `jetdail.fr`, etc.) and commit.
+3. Modify `REPO_HTTPS_URL` and `REPO_SSH_URL` at the top of `bootstrap.sh` to point to your fork.
+4. Create a Doppler project and add your secrets.
+5. Launch the installation using your fork's bootstrap script:
 
 ```bash
-export DOPPLER_TOKEN=dp.st.prd.VOTRE_TOKEN
-curl -fsSL "https://raw.githubusercontent.com/<votre-user>/vps_codeserver/main/bootstrap.sh" | bash
+export DOPPLER_TOKEN=dp.st.prd.YOUR_TOKEN
+curl -fsSL "https://raw.githubusercontent.com/<your-user>/vps_codeserver/main/bootstrap.sh" | bash
 ```
 
 ## 📁 Structure
 
-- `bootstrap.sh` – configuration initiale (Docker, Doppler, build, démarrage)
-- `docker-compose.yml` – services `codeserver` et `caddy`
-- `Dockerfile` – image CodeServer personnalisée
-- `scripts/utils.sh` – utilitaires de gestion
-- `Caddyfile` – configuration du reverse proxy
-- `workspace/` & `vscode-config/` – volumes persistants
+- `bootstrap.sh` – initial setup (Docker, Doppler, build, start)
+- `docker-compose.yml` – services `codeserver` and `caddy`
+- `Dockerfile` – custom CodeServer image
+- `scripts/utils.sh` – utility scripts
+- `Caddyfile` – reverse proxy configuration
+- `workspace/` & `vscode-config/` – persistent volumes
 
-## 🔒 Sécurité
+## 🔒 Security
 
-- Le fichier `.env` est généré automatiquement depuis Doppler et ne doit pas être commit.
-- Les clés SSH sont stockées dans `.ssh/` avec les permissions correctes.
-- Conservez votre `DOPPLER_TOKEN` et vos secrets en lieu sûr.
+- The `.env` file is generated from Doppler and should not be committed.
+- SSH keys are stored in `.ssh/` with correct permissions.
+- Keep your `DOPPLER_TOKEN` and other secrets safe.
 
-## 🤝 Contribution
+## 🤝 Contributing
 
-Les contributions sont les bienvenues ! Forkez, créez une branche (ou travaillez sur `main`) et soumettez une Pull Request.
+Contributions are welcome! Fork, create a branch (or work on `main`) and submit a Pull Request.
+

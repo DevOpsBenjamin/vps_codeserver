@@ -45,8 +45,10 @@ install_docker() {
 }
 
 # Clone repository
-clone_repo() {    
+clone_repo() {
     mkdir -p git
+    log_info "🔧 Setting git folder ownership to 1001:1001"
+    sudo chown -R 1001:1001 git
     if [ -d "vps_codeserver" ]; then
         log_info "📥 Repo already present pulling..."
         cd vps_codeserver

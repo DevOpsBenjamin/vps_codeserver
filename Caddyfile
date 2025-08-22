@@ -1,35 +1,40 @@
 jetdail.fr {
     reverse_proxy codeserver-main:8080
-    
-    # Optionnel: logs pour debug
+
+    # Log to stdout so Docker captures it (avoid file perms in container)
     log {
-        output file /var/log/caddy/jetdail.fr.log
+        output stdout
+        format console
+        level INFO
     }
 }
 
-# Dev server avec fallback intelligent
 dev.jetdail.fr {
-      reverse_proxy codeserver-main:5173 {
-          # Health check pour détecter si service actif
-          health_uri /
-          health_interval 15s
-          health_timeout 5s
+    reverse_proxy codeserver-main:5173 {
+        # Active health checks (optional; only useful if the dev server actually runs)
+        health_uri /
+        health_interval 15s
+        health_timeout 5s
 
-          # Headers pour dev
-          header_up Host {upstream_hostport}
-          header_up X-Forwarded-Proto {scheme}
-      }
+        # Usually not needed; Caddy sets sane forwards.
+        # header_up Host {upstream_hostport}
+        # (Remove X-Forwarded-Proto; Caddy forwards it by default)
+    }
 
-      # Page d'erreur custom si dev server down
-      handle_errors {
-          @5xx expression `{http.error.status_code} >= 500`
-          respond @5xx `
-          <h2>🚀 VueVN Dev Server</h2>
-          <p>Dev server not running.</p>
-          <p>Start with: <code>npm run dev sample</code> in code-server</p>
-          <p>Then refresh this page.</p>
-          ` 503 {
-              header Content-Type "text/html; charset=utf-8"
-          }
-      }
-  }
+    # Custom error page when upstream is down
+    handle_errors {
+        @5xx expression `{http.error.status_code} >= 500`
+        header @5xx Content-Type "text/html; charset=utf-8"
+        respond @5xx `<!doctype html>
+<html>
+  <head><meta charset="utf-8"><title>VueVN Dev Server</title></head>
+  <body>
+    <h2>🚀 VueVN Dev Server</h2>
+    <p>Dev server not running.</p>
+    <p>Start with: <code>npm run dev sample</code> in code-server</p>
+    <p>Then refresh this page.</p>
+  </body>
+</html>` 503
+    }
+}
+

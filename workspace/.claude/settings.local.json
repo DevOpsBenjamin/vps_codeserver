@@ -1,18 +1,32 @@
 {
   "permissions": {
     "allow": [
-      "Bash(git :*)",
-      "Bash(npm run:*)",
-      "Bash(npm install)",
-      "Bash(npx tsx:*)",
-      "Bash(git push:*)",
-      "Bash(mkdir:*)",
-      "Bash(mv:*)",
-      "Bash(rm:*)",
-      "Bash(git checkout:*)",
-      "Bash(git pull:*)"
+      "Bash(git*)",
+      "Bash(npm*)",
+      "Bash(npx*)",
+      "Bash(yarn*)",
+      "Bash(pnpm*)",
+      "Bash(mkdir*)",
+      "Bash(mv*)",
+      "Bash(cp*)",
+      "Bash(rm*)",
+      "Bash(ls*)",
+      "Bash(cat*)",
+      "Bash(touch*)",
+      "Bash(chmod*)",
+      "Bash(find*)",
+      "Bash(grep*)",
+      "Bash(echo*)"
     ],
-    "deny": [],
-    "ask": []
+    "deny": [
+      "Bash(rm -rf /*)",
+      "Bash(sudo*)",
+      "Bash(su*)"
+    ],
+    "ask": [
+      "Bash(git reset --hard*)",
+      "Bash(git rebase*)",
+      "Bash(rm -rf*)"
+    ]
   }
 }

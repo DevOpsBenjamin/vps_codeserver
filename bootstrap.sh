@@ -46,6 +46,7 @@ install_docker() {
 
 # Clone repository
 clone_repo() {    
+    mkdir -p git
     if [ -d "vps_codeserver" ]; then
         log_info "📥 Repo already present pulling..."
         cd vps_codeserver
